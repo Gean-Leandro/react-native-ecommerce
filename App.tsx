@@ -4,6 +4,6 @@ import LoadScreen from './src/screen/load';
 
 export default function App() {
   return(
-    <HomeScreen/>
+    <LoginScreen/>
   );
 }

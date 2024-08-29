@@ -2,6 +2,8 @@ import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from "reac
 import { useFonts } from 'expo-font';
 import { Formik } from "formik";
 import { useState } from "react";
+import { Activity_Indicator } from "../../components/active_indicator";
+import { Logo } from "../../components/logo";
 import * as Yup from 'yup';
 
 
@@ -19,9 +21,15 @@ export default function LoginScreen(props: LoginScreenProps){
         }
     }
     
-    useFonts({'Monocraft': require('../../assets/fonts/Monocraft.otf'),});
+    const [fontsLoaded] = useFonts({
+        'Monocraft': require('../../assets/fonts/Monocraft.otf'),
+    });
+    if (!fontsLoaded) {
+        return (
+            <Activity_Indicator/>
+        )
+    }
 
-    let font_display = "font-display ";
     let align_justify = "items-center justify-center ";
     let color_text_placeholder = "#8D8D8D"
 
@@ -32,9 +40,7 @@ export default function LoginScreen(props: LoginScreenProps){
                 <View className={align_justify + "w-[70%]"}>
                     
                     <View className={align_justify + "mb-10 absolute top-[-95%] w-[100%]"}>
-                        <Text className={font_display + "text-white text-[52px]"}>MEGA{"\n"}
-                            <Text className="text-[#00D3CC] text-[40px]">LI</Text>-<Text className="text-[#0DC07F] text-[40px]">FI</Text>
-                        </Text>
+                        <Logo first_line_size="52px" second_line_size="40px"/>
                     </View>
     
                     <Formik
