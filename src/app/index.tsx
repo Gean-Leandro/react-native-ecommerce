@@ -1,9 +1,10 @@
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, ToastAndroid } from "react-native";
 import { useFonts } from 'expo-font';
 import { Formik } from "formik";
+import { router } from 'expo-router';
 import { useState } from "react";
-import { Activity_Indicator } from "../../components/active_indicator";
-import { Logo } from "../../components/logo";
+import { Activity_Indicator } from "../components/active_indicator";
+import { Logo } from "../components/logo";
 import * as Yup from 'yup';
 
 
@@ -15,14 +16,15 @@ export default function LoginScreen(props: LoginScreenProps){
     const [resultado, setResultado] = useState<null | 'logado' | 'falhou'>(null);
     const handleLogin = ({email, senha}: any) => {
         if (email.trim() == "admin@admin.com" && senha.trim() == "admin123"){
-            setResultado('logado');
+            ToastAndroid.show('Logado', 3000);
+            router.replace('/home');
         } else {
             setResultado('falhou');
         }
     }
     
     const [fontsLoaded] = useFonts({
-        'Monocraft': require('../../assets/fonts/Monocraft.otf'),
+        'Monocraft': require('../assets/fonts/Monocraft.otf'),
     });
     if (!fontsLoaded) {
         return (
@@ -40,7 +42,7 @@ export default function LoginScreen(props: LoginScreenProps){
                 <View className={align_justify + "w-[70%]"}>
                     
                     <View className={align_justify + "mb-10 absolute top-[-95%] w-[100%]"}>
-                        <Logo first_line_size="52px" second_line_size="40px"/>
+                        <Logo first_line_size={52} second_line_size={40}/>
                     </View>
     
                     <Formik
@@ -87,7 +89,7 @@ export default function LoginScreen(props: LoginScreenProps){
 
                                 <TouchableOpacity
                                     onPress={() => handleSubmit()}
-                                    // disabled={isSubmitting}
+                                    disabled={isSubmitting}
                                     >
                                     <Text className="mt-4 font-display text-center text-white bg-[#16AA67] rounded-sm pt-2 pb-2">
                                         ENTRAR
