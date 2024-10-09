@@ -9,6 +9,7 @@ import { Modalize } from 'react-native-modalize';
 import { useRef } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Activity_Indicator } from "../components/active_indicator";
+import carrinho from "../store/carrinho-store";
 
 export interface LoginScreenProps{
 }
@@ -22,7 +23,8 @@ export default function LoginScreen(props: LoginScreenProps){
             <Activity_Indicator/>
         )
     }
-
+    
+    const { id, name, price, imagem} = useLocalSearchParams();
     const modal = useRef<Modalize>();
 
     const open_modal = () => {
@@ -33,7 +35,22 @@ export default function LoginScreen(props: LoginScreenProps){
         }
     }
 
-    const {name, price, imagem} = useLocalSearchParams();
+    const { addProduct } = carrinho();
+    const close_modal = () => {
+        try {
+            addProduct({
+                id: id,
+                name: name,
+                price: price,
+                img: imagem
+            })
+            modal.current?.close();
+            ToastAndroid.show('Adicionado', 3000);
+        } catch (erro) {
+            console.log(erro)
+        }
+    }
+
 
     const getImageSource = (imageName:any) => {
         switch (imageName) {
@@ -96,13 +113,11 @@ export default function LoginScreen(props: LoginScreenProps){
             </View>
         </ScrollView>
         <GestureHandlerRootView className="bg-[#393939] h-[60px] items-center justify-center">
-            {/* <Link> */}
             <TouchableOpacity className="w-[85%]" onPress={open_modal}>
                 <View className="bg-[#FF6000] pt-2 pb-2 justify-center items-center rounded-md">
                     <Text className="text-white font-display">ADICIONAR AO CARRINHO</Text>
                 </View>
             </TouchableOpacity>
-            {/* </Link> */}
             <Modalize
                 adjustToContentHeight
                 childrenStyle={{ height: 400 }}
@@ -122,7 +137,7 @@ export default function LoginScreen(props: LoginScreenProps){
                         </View>
                     </View>
                 <View className="bg-[#313131] items-center justify-center w-[100%] h-[60px]">
-                    <TouchableOpacity className="w-[85%]" onPress={open_modal}>
+                    <TouchableOpacity className="w-[85%]" onPress={close_modal}>
                         <View className="bg-[#FF6000] pt-2 pb-2 justify-center items-center rounded-md">
                             <Text className="text-white font-display">Confirmar</Text>
                         </View>

@@ -1,9 +1,10 @@
 import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator, FlatList } from "react-native";
 import { useFonts } from 'expo-font';
+import { Link } from "expo-router";
 import roteador from '../assets/fotos/Roteador_branco.jpg';
 import emissor from '../assets/fotos/Emissor.jpg';
 import receptor from '../assets/fotos/Receptor.jpg';
-import menu_icon from '../assets/icons/menu.png';
+import car_icon from '../assets/icons/shopping_cart.png';
 import search_icon from '../assets/icons/search.png';
 import { ProducView } from "../components/product_view";
 import { Logo } from "../components/logo";
@@ -68,9 +69,11 @@ export default function HomeScreen(props: HomeScreenProps){
                     <View className="bg-[#222322] p-2 rounded-[50px]">
                         <Image source={search_icon} style={{width: 30, height: 30}}/>
                     </View>
-                    <View className="bg-[#222322] p-2 ml-2 rounded-[50px]">
-                        <Image source={menu_icon} style={{width: 30, height: 30}}/>
-                    </View>
+                    <Link href={'/shopping_car'}>
+                        <View className="bg-[#222322] p-2 ml-2 rounded-[50px]">
+                            <Image source={car_icon} style={{width: 30, height: 30}}/>
+                        </View>
+                    </Link>
                 </View>
             </View>
             <View className="z-0 top-[-85px] w-[100%]">
@@ -89,6 +92,7 @@ export default function HomeScreen(props: HomeScreenProps){
                                 return (
                                     <View key={product.id}>
                                         <ProducView 
+                                            id={product.id}
                                             price={product.price} 
                                             product_name={product.name}
                                             image={product.img}/>
@@ -107,7 +111,8 @@ export default function HomeScreen(props: HomeScreenProps){
                             if (product.type == "receptor"){
                                 return (
                                     <View key={product.id}>
-                                        <ProducView  
+                                        <ProducView
+                                            id={product.id}
                                             price={product.price} 
                                             product_name={product.name}
                                             image={product.img}/>

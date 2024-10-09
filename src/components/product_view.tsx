@@ -4,6 +4,7 @@ import { Link } from "expo-router";
 import { object } from "yup";
 
 export interface ProductViewProps {
+    id: number,
     price: number,
     image: string,
     product_name: string
@@ -29,6 +30,7 @@ export function ProducView(props: ProductViewProps) {
             <View className="bg-[#FF6000] flex flex-row items-center justify-center rounded-sm mt-1 pt-2 pb-2">
                 <Link href={{pathname:'/product', 
                     params: {
+                        id: props.id,
                         price: props.price,
                         name: props.product_name,
                         imagem: props.image,
