@@ -1,12 +1,13 @@
 import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
 import { Activity_Indicator } from "../components/active_indicator";
 import { useFonts } from 'expo-font';
-import { useLocalSearchParams, router } from "expo-router";
+import { router } from "expo-router";
 import arrow_icon from '../assets/icons/arrow_back.png';
 import delet_icon from '../assets/icons/delet.png';
-import { collection, deleteDoc, doc, getDoc, getDocs, query, where } from "firebase/firestore";
-import { db } from "../../FirebaseConfig";
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
+import { db } from "../../FirebaseConfig";
+import { collection, deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
 
 interface Produto {
     id: string; 
@@ -31,7 +32,7 @@ export default function LoginScreen(){
     const [produtos, setProdutos] = useState<Produto[]>([]);
 
     const getCarrinho = async (uid:string) =>{
-        const q = query(collection(db, 'carrinho'), where('uid', '==', uid), where('status', '==', 'carrinho'));
+        const q = query(collection(db, 'carrinho'), where('uid', '==', uid), where('status', '==', 'aguardando pagamento'));
         await getDocs(q).then( resultados => {
             const carrinhoList = resultados.docs.map(doc => ({
                 ...doc.data(),
@@ -89,12 +90,12 @@ export default function LoginScreen(){
                 </TouchableOpacity>
             </View>
             <View className="h-[100%] w-[100%]">
-                <Text className="text-white text-[25px] font-display mt-3 text-center">Carrinho</Text>
+                <Text className="text-white text-[25px] font-display mt-3 text-center">Aguardando pagamento</Text>
                 <View className="bg-slate-600 ml-[5%] w-[90%] h-[1px] mt-3 mb-3"></View>
 
                 {carrinho.length == 0 ? 
                     <View className="justify-center items-center w-[100%] h-[100%]">
-                        <Text className="text-white text-[17px]">Nenhum produto no carrinho</Text>
+                        <Text className="text-white text-[17px]">Nenhum produto</Text>
                     </View> 
                     
                     : carrinho.map(prod => {
@@ -125,30 +126,6 @@ export default function LoginScreen(){
                 
             </View>
         </ScrollView>
-        <View className="bg-[#313131] items-center justify-center w-[100%] h-[12%]">
-            <TouchableOpacity className="w-[85%]" 
-                onPress={() => delet_all_product()}>
-                <View className="border-[#FF6000] border-[1px] pt-2 pb-2 justify-center items-center rounded-md">
-                    <Text className="text-white font-display">Limpar Carrinho</Text>
-                </View>
-            </TouchableOpacity>
-
-            {carrinho.length == 0 ? 
-                <TouchableOpacity className="w-[85%] m-2"
-                    disabled={true}>
-                    <View className="bg-black pt-2 pb-2 justify-center items-center rounded-md">
-                        <Text className="text-white font-display">Comprar</Text>
-                    </View>
-                </TouchableOpacity> :
-                <TouchableOpacity className="w-[85%] m-2" onPress={() => {
-                    router.navigate({pathname:'/buy_fase', params: { uid: uid }});
-                }}>
-                    <View className="bg-[#FF6000] pt-2 pb-2 justify-center items-center rounded-md">
-                        <Text className="text-white font-display">Comprar</Text>
-                    </View>
-                </TouchableOpacity> 
-            }
-        </View>
         </>
     )
 }

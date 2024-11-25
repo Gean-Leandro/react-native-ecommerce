@@ -1,15 +1,16 @@
-import { TouchableOpacity, Text, Image,View } from "react-native";
+import { Text, Image,View } from "react-native";
 import shopping_cart_icon from '../assets/icons/shopping_cart.png';
 import { Link } from "expo-router";
-import { object } from "yup";
 
 export interface ProductViewProps {
-    id: number,
+    id: string,
     price: number,
     image: string,
-    product_name: string
+    product_name: string,
+    uid: string
 }
 export function ProducView(props: ProductViewProps) {
+
     const getImageSource = (imageName:string) => {
         switch (imageName) {
           case 'Emissor':
@@ -31,9 +32,7 @@ export function ProducView(props: ProductViewProps) {
                 <Link href={{pathname:'/product', 
                     params: {
                         id: props.id,
-                        price: props.price,
-                        name: props.product_name,
-                        imagem: props.image,
+                        uid: props.uid
                     }}}>
 
                     <Text className="font-display mr-2 text-white">R$ {props.price}</Text>
