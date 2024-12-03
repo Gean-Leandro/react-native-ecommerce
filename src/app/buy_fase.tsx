@@ -1,10 +1,9 @@
 import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
 import { Activity_Indicator } from "../components/active_indicator";
 import { useFonts } from 'expo-font';
-import { router, useLocalSearchParams } from "expo-router";
-import RadioButton from "../components/radio_button";
-import carrinho from "../store/carrinho-store";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import arrow_icon from '../assets/icons/arrow_back.png';
+import edit_icon from '../assets/icons/edit.png';
 import { useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../FirebaseConfig";
@@ -32,6 +31,7 @@ export default function LoginScreen(){
     const [produtos, setProdutos] = useState<Produto[]>([]);
     const [total, setTotal] = useState<number>(0);
     const [find, setFind] = useState<boolean>(false);
+    const [adress, setadress] = useState<[]>([])
 
     const getCarrinho = async (uid:string) =>{
         const q = query(collection(db, 'carrinho'), where('uid', '==', uid), where('status', '==', 'carrinho'));
@@ -41,6 +41,17 @@ export default function LoginScreen(){
             })) as [];
 
             setCarrinho(carrinhoList)
+        });
+    }
+    
+    const getAdress = async (uid:string) =>{
+        const q = query(collection(db, 'endereco'), where('uid', '==', uid));
+        await getDocs(q).then( resultados => {
+            const adressList = resultados.docs.map(doc => ({
+                ...doc.data(),
+            })) as [];
+
+            setadress(adressList)
         });
     }
 
@@ -69,10 +80,15 @@ export default function LoginScreen(){
         })
         setTotal(sum_total);
     }
-    getCarrinho(uid.toString());
-    fetchProdutos();
 
-    if (carrinho.length > 0 && !find) {
+    if (carrinho.length == 0 && adress.length == 0 && produtos.length == 0) {
+        getCarrinho(uid.toString())
+        getAdress(uid.toString());
+        fetchProdutos();
+    }
+
+
+    if (carrinho.length > 0 && produtos.length > 0 && !find) {
         get_total();
         setFind(true);
     }
@@ -102,8 +118,21 @@ export default function LoginScreen(){
                 <Text className="text-white text-[25px] font-display mt-3 text-center">Endereço</Text>
                 <View className="bg-slate-600 ml-[5%] w-[90%] h-[1px] mt-3 mb-3"></View>
                 
-                <Text className="pl-5 mb-2 text-[17px] text-white">Santa Maria Madalena; Rua Álvaro da Silva; 1602</Text>
-                <Text className="pl-5 text-[17px] text-white">União dos Palmares, Alagoas, Brasil, 57800-000</Text>
+                {adress.length > 0 ? 
+                adress.map(i => (
+                    <>
+                        <Text className="pl-5 mb-2 text-[17px] text-white">{i['bairro']}; Rua {i['rua']}; {i['num_casa']}</Text>
+                        <Text className="pl-5 text-[17px] text-white">{i['cidade']}, {i['estado']}, {i['pais']}, {i['cep']}</Text>
+                    </>
+                ))
+                 : <>
+                    <Text className="pl-5 mb-2 text-[17px] text-white">Procurando endereco...</Text>
+                </>}
+                <View className="absolute top-[65%] left-[85%]">
+                    <TouchableOpacity onPress={() => router.push({pathname:'/adress', params:{uid:uid}})}>
+                        <Image source={edit_icon} style={{width:25, height:25}}/>
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <View className="bg-[#313131] pb-2 mb-2 w-[100%]">
@@ -118,24 +147,30 @@ export default function LoginScreen(){
                 <Text className="text-white text-[25px] font-display mt-3 text-center">Detalhe(s) dos item(ns)</Text>
                 <View className="bg-slate-600 ml-[5%] w-[90%] h-[1px] mt-3 mb-3"></View>
 
-                {carrinho.map(prod => {
-                    let product_details:any;
-                    produtos.map(i => {
-                    if (prod['product_id'] == i.id) {
-                        product_details = i;
-                    }})
-                    return (
-                        <View key={prod['id']} className="pl-4 mb-6 flex-row items-center">
-                            <View className="border-[1px] border-[#FF6000] rounded-sm">
-                                <Image source={getImageSource(product_details['img'])} style={{width: 60, height: 60}}/>
+                {carrinho.length > 0 && produtos.length > 0 ? 
+                    carrinho.map(prod => {
+                        let product_details:any;
+                        produtos.map(i => {
+                        if (prod['product_id'] == i.id) {
+                            product_details = i;
+                        }})
+                        product_details;
+                        return (
+                            <View key={prod['id']} className="pl-4 mb-6 flex-row items-center">
+                                <View className="border-[1px] border-[#FF6000] rounded-sm">
+                                    <Image source={getImageSource(product_details['img'])} style={{width: 60, height: 60}}/>
+                                </View>
+                                <View className="h-[100%] pl-4 pt-2 w-[40%]">
+                                    <Text className="text-white text-[20px] mb-2 font-bold">R$ {product_details["price"] * prod['unidades']}</Text>
+                                    <Text className="text-white text-[15px]">{product_details['name']}  |  {prod['unidades']}x</Text>
+                                </View>
                             </View>
-                            <View className="h-[100%] pl-4 pt-2 w-[40%]">
-                                <Text className="text-white text-[20px] mb-2 font-bold">R$ {product_details["price"] * prod['unidades']}</Text>
-                                <Text className="text-white text-[15px]">{product_details['name']}  |  {prod['unidades']}x</Text>
-                            </View>
-                        </View>
-                    )
-                })}  
+                        )
+
+                    })
+                    :
+                    <Text className="text-white text-[15px]">Carregando produtos...</Text>
+                }  
                 
             </View>
 

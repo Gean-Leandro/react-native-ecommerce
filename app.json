@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "e-commerce",
-    "slug": "e-commerce",
+    "slug": "mega-lifi",
     "scheme": "app",
     "experiments": {
       "typedRoutes": true
@@ -19,6 +19,9 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "br.com.geancarlossl.reactnative",
+      "versionCode":1,
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -30,6 +33,15 @@
     "plugins": [
       "expo-font",
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "96e53b8e-407c-46cd-985d-053ac83f752a"
+      }
+    },
+    "owner": "geancarlossl"
   }
 }

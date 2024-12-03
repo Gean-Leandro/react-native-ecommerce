@@ -74,7 +74,7 @@ export default function LoginScreen(){
             <View className="absolute z-10 top-[1%] left-[4%]">
                 <TouchableOpacity className="items-center justify-center pl-2 pt-2 pb-2"
                     onPress={() => {
-                        router.back();
+                        router.push({pathname:'/perfil', params:{uid:uid}});
                     }}>
                     <Image source={arrow_icon} style={{width:25, height:25}}/>
                 </TouchableOpacity>
